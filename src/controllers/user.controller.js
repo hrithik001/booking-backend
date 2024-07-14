@@ -70,3 +70,7 @@ export const userProfile = async (req,res) => {
         res.json(null);
     }
 }
+
+export const userLogout = async (req,res) => {
+    res.cookie('token','').json({message: 'Successfully Logged out'})
+}
