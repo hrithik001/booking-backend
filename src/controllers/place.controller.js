@@ -36,22 +36,61 @@ export const addNewPlace = async (req,res) => {
    
 }
 
-//  title:{
-//         type: String,
-//         required: true
-//     },
-//     owner:{
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'User'
-//     },
-//     address:{
-//         type: String,
-//         required: true
-//     },
-//     photos: [String],
-//     descriptions: String,
-//     perks: [String],
-//     extraInfo: String,
-//     checkIn: Number,
-//     checkOut: Number,
-//     maxGuests: Number,
+export const getAllPlaces = async (req,res) => {
+     const {token} = req.cookies;
+    if(!token) throw error({message: "Log in"})
+     jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,user) => {
+        if(err) throw err
+
+        const {id} = user;
+
+        res.json(await Place.find({owner: id}))
+
+
+
+     })
+}
+
+
+export const getSinglePlace = async (req,res) => {
+    const {id} = req.params;
+    res.json(await Place.findById(id));
+}
+
+export const updatePlaceData = async (req,res) => {
+      const {id} = req.params;
+      const {token} = req.cookies;
+    if(!token) throw error({message: "Log in"})
+
+    const {title,description,address,addedphotos,perks,extraInfo,checkIn,checkOut,maxGuests} = req.body;
+
+    
+
+     jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,{id:userId}) => {
+        if(err) throw err   
+        const placeDoc = await Place.findById(id);
+        if(userId === placeDoc.owner.toString())
+        {
+            placeDoc.set({
+                title,
+                description,
+                address,
+                photos: addedphotos,
+                perks,
+                extraInfo,
+                checkIn,
+                checkOut,
+                maxGuests
+            })
+            placeDoc.save();
+            res.json({
+                message: "Place updated successfully",
+                place: placeDoc
+            })
+        }
+
+     })
+
+
+      
+}
