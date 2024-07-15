@@ -1,6 +1,6 @@
 import Place from "../models/place.model.js"
 import jwt from 'jsonwebtoken'
-
+import Booking from "../models/Booking.model.js";
 
 export const addNewPlace = async (req,res) => {
     const {token} = req.cookies;
@@ -99,4 +99,27 @@ export const updatePlaceData = async (req,res) => {
 
 
       
+}
+
+export const bookPlace = async (req,res) => {
+    const {name,bookingFrom,bookingTo,address,phoneNumber,placeId,numberOfGuests,totalPrice} = req.body;
+    try {
+        // const placeDoc = await Place.findById(placeId);
+        const response = await Booking.create({
+            name,
+            bookingFrom,
+            bookingTo,
+            address,
+            phoneNumber,
+            place:placeId,
+            numberOfGuests,
+            totalPrice
+
+        })
+
+        res.json({bookingDetails: response})
+    } catch (error) {
+        console.log("place not booking",error);
+        throw error;
+    }
 }
