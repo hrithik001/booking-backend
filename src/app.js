@@ -27,7 +27,7 @@ import placeRoutes from './routes/place.routes.js'
 // import { photoUploadMiddleware } from "./middlewares/photoUpload.middleware.js";
 
 app.use("/users", userRoutes)
-app.use("/place",placeRoutes)
+app.use("/places",placeRoutes)
 
 const uploadMiddleware = multer({dest: 'uploads/'});
 app.post('/upload/by-file',uploadMiddleware.array('photos',100), (req,res) => {
