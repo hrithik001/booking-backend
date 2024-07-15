@@ -2,8 +2,10 @@ import express from "express"
 import cors from "cors"
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'
-
+import multer from 'multer';
+import fs from 'fs'
 const __dirname = 'D:/my_playground/booking app/api'
+
 
 
 const app = express()
@@ -22,11 +24,40 @@ app.use('/uploads',express.static(__dirname+'/uploads')) // eg: http://localhost
 
 import userRoutes from './routes/user.routes.js'
 import placeRoutes from './routes/place.routes.js'
+// import { photoUploadMiddleware } from "./middlewares/photoUpload.middleware.js";
 
 app.use("/users", userRoutes)
 app.use("/place",placeRoutes)
 
+const uploadMiddleware = multer({dest: 'uploads/'});
+app.post('/upload/by-file',uploadMiddleware.array('photos',100), (req,res) => {
+    const upLoadedFiles = [];
+    console.log("request",req.files);
+    for(let i = 0;i < req.files.length ; i++)
+    {
+        const {path , originalname} = req.files[i];
+        const lastDotIndex = originalname.lastIndexOf('.');
+         const ext = originalname.substring(lastDotIndex + 1);
+         console.log("extenstion",ext);
+
+        
+        const newPath = path + '.' + ext;
+        fs.renameSync(path,newPath);
+        upLoadedFiles.push(newPath.replace('uploads\\',''))
+        const {name} = req.files[i];
+
+        console.log("from here",name);
+
+    }
+
+    res.json(upLoadedFiles)
+
+    console.log(res.files);
+})
+
 // app.use("/login
 // /users/login 
+
+
 
 export default app; 
