@@ -19,6 +19,7 @@ export const addNewPlace = async (req,res) => {
                 perks,
                 extraInfo,
                 checkIn,
+                price,
                 checkOut,
                 maxGuests
             })
@@ -51,6 +52,10 @@ export const getAllPlaces = async (req,res) => {
      })
 }
 
+export const getUserPlaces = async (req,res) => {
+    res.json(await Place.find());
+}
+
 
 export const getSinglePlace = async (req,res) => {
     const {id} = req.params;
@@ -62,7 +67,7 @@ export const updatePlaceData = async (req,res) => {
       const {token} = req.cookies;
     if(!token) throw error({message: "Log in"})
 
-    const {title,description,address,addedphotos,perks,extraInfo,checkIn,checkOut,maxGuests} = req.body;
+    const {title,description,address,addedphotos,perks,extraInfo,checkIn,price,checkOut,maxGuests} = req.body;
 
     
 
@@ -79,6 +84,7 @@ export const updatePlaceData = async (req,res) => {
                 perks,
                 extraInfo,
                 checkIn,
+                price,
                 checkOut,
                 maxGuests
             })
