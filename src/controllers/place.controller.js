@@ -1,6 +1,7 @@
 import Place from "../models/place.model.js"
 import jwt from 'jsonwebtoken'
 import Booking from "../models/Booking.model.js";
+import {getUserDataFromToken} from '../utils/getUserData.utils.js'
 
 export const addNewPlace = async (req,res) => {
     const {token} = req.cookies;
@@ -38,22 +39,24 @@ export const addNewPlace = async (req,res) => {
 }
 
 export const getAllPlaces = async (req,res) => {
-     const {token} = req.cookies;
-    if(!token) throw error({message: "Log in"})
-     jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,user) => {
-        if(err) throw err
+    //  const {token} = req.cookies;
+    // if(!token) throw error({message: "Log in"})
+    //  jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,user) => {
+    //     if(err) throw err
 
-        const {id} = user;
+    //     const {id} = user;
 
-        res.json(await Place.find({owner: id}))
+    //     res.json(await Place.find({owner: id}))
 
 
 
-     })
+    //  })
+    res.json(await Place.find())
 }
 
 export const getUserPlaces = async (req,res) => {
-    res.json(await Place.find());
+    const userData = await getUserDataFromToken(req);
+    res.json(await Place.find({owner: userData.id}));
 }
 
 
@@ -103,10 +106,12 @@ export const updatePlaceData = async (req,res) => {
 
 export const bookPlace = async (req,res) => {
     const {name,bookingFrom,bookingTo,address,phoneNumber,placeId,numberOfGuests,totalPrice} = req.body;
+     const userData = await getUserDataFromToken(req);
     try {
-        // const placeDoc = await Place.findById(placeId);
+       
         const response = await Booking.create({
             name,
+            user:userData.id,
             bookingFrom,
             bookingTo,
             address,
@@ -117,9 +122,24 @@ export const bookPlace = async (req,res) => {
 
         })
 
-        res.json({bookingDetails: response})
+        res.json(response)
     } catch (error) {
         console.log("place not booking",error);
         throw error;
     }
+}
+
+
+export const getBookings = async (req,res) => {
+    console.log("inside fetching function")
+    const userData = await getUserDataFromToken(req);
+    res.json(await Booking.find({user: userData.id}).populate('place'));
+    console.log("completed fetched data")
+
+}
+
+export const getBookingDetails = async (req,res) => {
+      const {id} = req.params;
+     const userData = await getUserDataFromToken(req);
+    res.json(await Booking.find({user: userData.id,_id: id}).populate('place'));
 }
