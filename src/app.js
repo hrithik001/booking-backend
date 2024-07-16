@@ -10,7 +10,12 @@ const __dirname = 'D:/my_playground/booking app/api'
 
 const app = express()
 
-app.use(cors())
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow only this origin
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+
+app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use('/uploads',express.static(__dirname+'/uploads')) // eg: http://localhost:4000/uploads/pic1720979383958.jpg we can see the uploaded image here
