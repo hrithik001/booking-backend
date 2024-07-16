@@ -11,7 +11,7 @@ const __dirname = 'D:/my_playground/booking app/api'
 const app = express()
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow only this origin
+  origin: 'https://booking-frontend-beige.vercel.app', // Allow only this origin
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
 
