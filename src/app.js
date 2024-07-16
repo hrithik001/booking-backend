@@ -10,10 +10,7 @@ const __dirname = 'D:/my_playground/booking app/api'
 
 const app = express()
 
-app.use(cors({
-    credentials: true,
-    origin: '*'
-}))
+app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use('/uploads',express.static(__dirname+'/uploads')) // eg: http://localhost:4000/uploads/pic1720979383958.jpg we can see the uploaded image here
