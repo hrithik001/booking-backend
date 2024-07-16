@@ -22,8 +22,12 @@ export const uploadByLink =  (req,res) => {
     res.json({name: newName});
 
     }catch(err){
-        console.log("recived error ",err);
-        throw err
+        console.error("Error downloading image:", err);
+        if (err.message.includes('ENOTFOUND') || err.message.includes('404')) {
+            res.status(400).json({ message: "Invalid URL or unable to fetch image" });
+        } else {
+            res.status(500).json({ message: "Internal Server Error", error: err.message });
+        }
     }
 } 
 

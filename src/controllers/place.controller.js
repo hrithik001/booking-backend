@@ -4,15 +4,18 @@ import Booking from "../models/Booking.model.js";
 import {getUserDataFromToken} from '../utils/getUserData.utils.js'
 
 export const addNewPlace = async (req,res) => {
-    const {token} = req.cookies;
-    if(!token) throw error({message: "Log in"})
-    const {title,description,address,addedphotos,perks,extraInfo,checkIn,checkOut,maxGuests} = req.body;
-    jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,user) => {
-        if(err) throw err
+    // const {token} = req.cookies;
+    // if(!token) throw error({message: "Log in"})
+    const {title,description,address,addedphotos,perks,extraInfo,checkIn,checkOut,maxGuests,price} = req.body;
+    // jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,user) => {
+    //     if(err) throw err
+        const userData = await getUserDataFromToken(req);
+
+        if(!userData) return res.status(401).json({message: "You need to login"})
           
         try {
             const placeDoc = await Place.create({
-                owner: user.id,
+                owner: userData.id,
                 photos: addedphotos,
                 title,
                 description,
@@ -25,15 +28,15 @@ export const addNewPlace = async (req,res) => {
                 maxGuests
             })
 
-            console.log("newPLace ",placeDoc)
+            
             res.json({placeDoc});
 
         } catch (error) {
-            
+            throw error
         }
             
 
-    })
+    
 
    
 }
