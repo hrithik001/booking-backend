@@ -9,25 +9,35 @@ import fs from 'fs'
 // const __dirname = path.dirname(__filename);
 const __dirname = 'D:/my_playground/booking app/api'
 
-export const uploadByLink =  (req,res) => {
+export const uploadByLink = async  (req,res) => {
 
     const {link} = req.body;
   try {
+
+
+    const response = await axios.get(link, {
+      responseType: 'arraybuffer'
+    });
+     const contentType = response.headers['content-type'];
+    if (!contentType.startsWith('image/')) {
+      return res.status(400).json({ error: 'URL does not point to an image' });
+    }
+
+    
     const newName = 'pic' + Date.now() + '.jpg';
     imageDownloader.image({
         url: link,
         dest: __dirname + '/uploads/' + newName,
     });
 
-    res.json({name: newName});
+    return res.status(200).json({ message: `Image uploaded successfully and saved as ${newName}` });
 
-    }catch(err){
-        console.error("Error downloading image:", err);
-        if (err.message.includes('ENOTFOUND') || err.message.includes('404')) {
-            res.status(400).json({ message: "Invalid URL or unable to fetch image" });
-        } else {
-            res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }catch(error){
+        
+         if (error.response && error.response.status === 404) {
+            return res.status(404).json({ error: 'Image not found at the URL' });
         }
+    return res.status(500).json({ error: 'An error occurred while fetching the image' });
     }
 } 
 

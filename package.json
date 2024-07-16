@@ -18,7 +18,8 @@
   "description": "backend for booking app",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "start": "node src/index.js"
   },
   "author": "hrithik roshan kumar",
   "license": "ISC"
