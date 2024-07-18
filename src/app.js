@@ -2,8 +2,7 @@ import express from "express"
 import cors from "cors"
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'
-import multer from 'multer';
-import fs from 'fs'
+
 const __dirname = 'D:/my_playground/booking app/api'
 
 
@@ -11,20 +10,32 @@ const __dirname = 'D:/my_playground/booking app/api'
 const app = express()
 
 // const corsOptions = {
-//   // origin: 'https://booking-frontend-beige.vercel.app',
-//   origin: 'http://localhost:5173',
+//   origin: 'https://localhost:5173',
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+//    origin: 'http://localhost:5173',
 //   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 // };
+// const corsOptions = {
+//     origin: 'https://booking-frontend-beige.vercel.app',
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//      credentials: true
+// };
+
 const corsOptions = {
-    origin: 'https://booking-frontend-beige.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add methods you need
-    allowedHeaders: ['Content-Type', 'Authorization'], // Add headers you need
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        callback(null, true); // Allow all origins
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 };
 
 app.use(cors(corsOptions))
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use('/uploads',express.static(__dirname+'/uploads')) // eg: http://localhost:4000/uploads/pic1720979383958.jpg we can see the uploaded image here
+app.use('/uploads',express.static(__dirname+'/uploads'))
 
 
 
@@ -32,9 +43,8 @@ app.use('/uploads',express.static(__dirname+'/uploads')) // eg: http://localhost
 
 import userRoutes from './routes/user.routes.js'
 import placeRoutes from './routes/place.routes.js'
-// import adminRoutes from './routes/admin.routes.js'
 import uploadPicture from './routes/upload.routes.js'
-// import { photoUploadMiddleware } from "./middlewares/photoUpload.middleware.js";
+
 
 app.use("/users", userRoutes)
 app.use("/places",placeRoutes)
