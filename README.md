@@ -1,4 +1,4 @@
-# Backend Service for Your Project
+# Backend Service for booking
 
 Welcome to the backend service for your project. This service provides APIs for managing places, bookings, and user authentication.
 
