@@ -41,10 +41,3 @@ Welcome to the backend service for your project. This service provides APIs for 
 - MongoDB installed locally or MongoDB Atlas account
 - Cloudinary account API key and secret (if using for image uploads)
 
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/your/repository.git
-   cd backend-service
