@@ -32,7 +32,8 @@ export const addNewPlace = async (req,res) => {
             res.json({placeDoc});
 
         } catch (error) {
-            throw error
+             console.error("Error adding new place:", error);
+             res.status(500).json({ message: "Failed to add new place" });
         }
             
 
@@ -42,36 +43,47 @@ export const addNewPlace = async (req,res) => {
 }
 
 export const getAllPlaces = async (req,res) => {
-    //  const {token} = req.cookies;
-    // if(!token) throw error({message: "Log in"})
-    //  jwt.verify(token,process.env.JWT_SECRET_KEY, async (err,user) => {
-    //     if(err) throw err
-
-    //     const {id} = user;
-
-    //     res.json(await Place.find({owner: id}))
-
-
-
-    //  })
-    res.json(await Place.find())
+    try {
+        const places = await Place.find();
+        res.json(places);
+    } catch (error) {
+        console.error("Error fetching all places:", error);
+        res.status(500).json({ message: "Failed to fetch places" });
+    }
 }
 
 export const getUserPlaces = async (req,res) => {
-    const userData = await getUserDataFromToken(req);
-    res.json(await Place.find({owner: userData.id}));
+     try {
+        const userData = await getUserDataFromToken(req);
+        if (!userData) {
+            return res.status(401).json({ message: "You need to login" });
+        }
+        const userPlaces = await Place.find({ owner: userData.id });
+        res.json(userPlaces);
+    } catch (error) {
+        console.error("Error fetching user places:", error);
+        res.status(500).json({ message: "Failed to fetch user places" });
+    }
 }
 
 
 export const getSinglePlace = async (req,res) => {
-    const {id} = req.params;
-    res.json(await Place.findById(id));
+     try {
+        const { id } = req.params;
+        const place = await Place.findById(id);
+        res.json(place);
+    } catch (error) {
+        console.error("Error fetching single place:", error);
+        res.status(500).json({ message: "Failed to fetch place" });
+    }
 }
 
 export const updatePlaceData = async (req,res) => {
+
+    try{
       const {id} = req.params;
       const {token} = req.cookies;
-    if(!token) throw error({message: "Log in"})
+    if(!token) throw new Error("User not authenticated");
 
     const {title,description,address,addedphotos,perks,extraInfo,checkIn,price,checkOut,maxGuests} = req.body;
 
@@ -102,15 +114,21 @@ export const updatePlaceData = async (req,res) => {
         }
 
      })
+    }
+    catch(err){
+        console.error("Error updating place:", error);
+        res.status(500).json({ message: "Failed to update place" });
+    }
 
 
       
 }
 
 export const bookPlace = async (req,res) => {
-    const {name,bookingFrom,bookingTo,address,phoneNumber,placeId,numberOfGuests,totalPrice} = req.body;
-     const userData = await getUserDataFromToken(req);
-    try {
+     try {
+        const {name,bookingFrom,bookingTo,address,phoneNumber,placeId,numberOfGuests,totalPrice} = req.body;
+        const userData = await getUserDataFromToken(req);
+   
        
         const response = await Booking.create({
             name,
@@ -127,22 +145,33 @@ export const bookPlace = async (req,res) => {
 
         res.json(response)
     } catch (error) {
-        console.log("place not booking",error);
-        throw error;
+        console.error("Error booking place:", error);
+        res.status(500).json({ message: "Failed to book place" });
     }
 }
 
 
 export const getBookings = async (req,res) => {
-    console.log("inside fetching function")
-    const userData = await getUserDataFromToken(req);
-    res.json(await Booking.find({user: userData.id}).populate('place'));
-    console.log("completed fetched data")
+    try {
+        console.log("inside fetching function")
+        const userData = await getUserDataFromToken(req);
+        res.json(await Booking.find({user: userData.id}).populate('place'));
+        console.log("completed fetched data")
+    }catch(error){
+         console.error("Error fetching user bookings:", error);
+        res.status(500).json({ message: "Failed to fetch bookings" });
+    }
 
 }
 
 export const getBookingDetails = async (req,res) => {
+    try {
       const {id} = req.params;
      const userData = await getUserDataFromToken(req);
-    res.json(await Booking.find({user: userData.id,_id: id}).populate('place'));
+    const booking = await Booking.findOne({ _id: id, user: userData.id }).populate('place');
+        res.json(booking);
+    }catch(error){
+         console.error("Error fetching booking details:", error);
+        res.status(500).json({ message: "Failed to fetch booking details" });
+    }
 }
