@@ -10,9 +10,15 @@ const __dirname = 'D:/my_playground/booking app/api'
 
 const app = express()
 
+// const corsOptions = {
+//   // origin: 'https://booking-frontend-beige.vercel.app',
+//   origin: 'http://localhost:5173',
+//   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+// };
 const corsOptions = {
-  origin: 'https://booking-frontend-beige.vercel.app', // Allow only this origin
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    origin: 'https://booking-frontend-beige.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add methods you need
+    allowedHeaders: ['Content-Type', 'Authorization'], // Add headers you need
 };
 
 app.use(cors(corsOptions))
