@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 export const getUserDataFromToken = (req) => {
     return new Promise((resolve,reject) => {
         const token = req.cookies.token;
+        console.log(`JWT = ${token}`)
         if(!token)
         {
             reject(new Error('JWT token not provided'));
